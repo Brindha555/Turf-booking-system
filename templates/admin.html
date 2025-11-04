@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Turf Booking Management</title>
+    <link rel="stylesheet" href="/static/css/admin.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-tachometer-alt"></i> Turf Booking Management System</h1>
+            <nav>
+                <a href="/admin/dashboard" class="nav-link active">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="/admin/calendar" class="nav-link">
+                    <i class="fas fa-calendar"></i> Calendar View
+                </a>
+                <a href="/admin/reports" class="nav-link">
+                    <i class="fas fa-chart-bar"></i> Reports & Analytics
+                </a>
+                <a href="/admin/logout" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </header>
+
+        <div class="admin-container">
+            <div class="admin-header">
+                <div class="stats-grid">
+                    <div class="stat-card total">
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalBookings">{{ total_bookings or 0 }}</h3>
+                            <p>Total Bookings</p>
+                        </div>
+                    </div>
+                    <div class="stat-card pending">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="pendingBookings">{{ pending_bookings or 0 }}</h3>
+                            <p>Pending Approval</p>
+                        </div>
+                    </div>
+                    <div class="stat-card approved">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="approvedBookings">{{ approved_bookings or 0 }}</h3>
+                            <p>Approved</p>
+                        </div>
+                    </div>
+                    <div class="stat-card cancelled">
+                        <div class="stat-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="cancelledBookings">{{ cancelled_bookings or 0 }}</h3>
+                            <p>Cancelled</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="refresh-btn" onclick="loadBookings()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+
+            <div class="filters">
+                <select id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+                <input type="date" id="dateFilter" placeholder="Filter by date">
+                <input type="text" id="searchInput" placeholder="Search by name, email or phone...">
+            </div>
+
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Loading bookings...</p>
+            </div>
+
+            <div id="noAppointments" class="no-bookings hidden">
+                <h3>No bookings found</h3>
+                <p>Try adjusting your filters or check back later.</p>
+            </div>
+
+            <div id="appointmentsTable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Customer</th>
+                            <th>Contact</th>
+                            <th>Turf Type</th>
+                            <th>Booking Date</th>
+                            <th>Time Slot</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointmentsBody">
+                        <!-- Bookings will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Action Modal -->
+    <div id="confirmModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirm Action</h2>
+            </div>
+            <p id="confirmMessage">Are you sure you want to proceed?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" onclick="closeConfirmModal()">Cancel</button>
+                <button class="modal-btn primary" id="confirmBtn" onclick="confirmAction()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Success!</h2>
+            </div>
+            <p id="successMessage">Action completed successfully.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="closeSuccessModal()">OK</button>
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/admin.js"></script>
+</body>
+</html>
